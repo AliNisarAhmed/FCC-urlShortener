@@ -16,6 +16,12 @@ app.get('/', function(request, response) {
   response.sendFile(__dirname + '/views/index.html');
 });
 
+app.post('/api/shorturl/new', (req, res) => {
+  console.log(req.params);
+  console.log(req.body);
+  res.send('post request received');
+})
+
 // listen for requests :)
 const listener = app.listen(process.env.PORT, function() {
   console.log('Your app is listening on port ' + listener.address().port);
