@@ -67,3 +67,24 @@ footer {
   align-items: center;
   justify-content: flex-end;
 }
+
+.postURL {
+  width: 80%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.postURL p {
+  font-size: 1.3rem;
+  margin-right: 1rem;
+}
+
+.postURL input {
+  padding: .5rem 1rem;
+  margin-right: 1rem;
+}
+
+.postURL button {
+  padding: 1rem;
+}

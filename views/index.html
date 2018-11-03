@@ -52,27 +52,33 @@
       <h2>
         Short URL Creation
       </h2>
-      <p>
+      <p class="example">
         example: POST [project_url]/api/shorturl/new - https://www.google.com
       </p>
+      
+      <div class="postURL">
+        <p>URL to be shortened</p>
+        <form action="/shortul" method="POST">
+          <input type="text">
+          <button type="submit">
+            POST URL
+          </button>
+        </form>
+      </div>
       
       <h2>
         Exampe Usage:
       </h2>
       <div class="example">
-        <a href="https://thread-paper.hyperdev.space/api/shorturl/3">[this_project_url]/api/shorturl/3</a>
+        <a href="https://slash-fiction.glitch.me/api/shorturl/3">[this_project_url]/api/shorturl/3</a>
       </div>
       
       
       <h2>
-        Exampe Output:
+        Will Redirect to:
       </h2>
       <div class="example">
-          { <br>
-            "ipaddress": "159.20.14.100", <br>
-            "language": "en-US,en;q=0.5", <br>
-            "software":"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/50.0" <br>
-          }
+          <a href="https://forum.freecodecamp.com">https://forum.freecodecamp.com</a> 
       </div>
       
     </main>
