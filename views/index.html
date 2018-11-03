@@ -1,12 +1,3 @@
-<!-- This is a static file -->
-<!-- served from your routes in server.js -->
-
-<!-- You might want to try something fancier: -->
-<!-- html/nunjucks docs: https://mozilla.github.io/nunjucks/ -->
-<!-- pug: https://pugjs.org/ -->
-<!-- haml: http://haml.info/ -->
-<!-- hbs(handlebars): http://handlebarsjs.com/ -->
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -24,35 +15,78 @@
     <script src="/client.js" defer></script>
   </head>
   <body>
-    <header>
-      <h1>
-        A Dream of the Future
-      </h1>
+    
+    <div class="container">
+      
+      <header>
+        <h1>
+          API Project: URL Shortener Microservice
+        </h1>
+        <h2>
+          User Story:
+        </h2>
     </header>
 
     <main>
-      <p class="bold">Oh hi,</p>
+      <ol>
+        <li>
+          <p>
+            I can POST a URL to [project_url]/api/shorturl/new and I will receive a shortened URL in the JSON response.
+            Example : {"original_url":"www.google.com","short_url":1}
+          </p>
+        </li>
+        <li>
+          <p>
+            If I pass an invalid URL that doesn't follow the http(s)://www.example.com(/more/routes) format, the JSON response will contain an error like {"error":"invalid URL"}
+            HINT: to be sure that the submitted url points to a valid site you can use the function dns.lookup(host, cb) from the dns core module.  
+          </p>
+        </li>
+        <li>
+          <p>
+            When I visit the shortened URL, it will redirect me to my original link.
+          </p>
+        </li>
+      </ol>
       
-      <p>Tell me your hopes and dreams:</p>
       
-      <form>
-        <input name="dream" type="text" maxlength="100" placeholder="Dreams!" aria-labelledby="submit-dream">
-        <button type="submit" id="submit-dream">Submit Dream</button>
-      </form>
+      <h2>
+        Short URL Creation
+      </h2>
+      <p>
+        example: POST [project_url]/api/shorturl/new - https://www.google.com
+      </p>
       
-      <section class="dreams">
-        <ul id="dreams"></ul>
-      </section>
+      <h2>
+        Exampe Usage:
+      </h2>
+      <div class="example">
+        <a href="https://thread-paper.hyperdev.space/api/shorturl/3">[this_project_url]/api/shorturl/3</a>
+      </div>
+      
+      
+      <h2>
+        Exampe Output:
+      </h2>
+      <div class="example">
+          { <br>
+            "ipaddress": "159.20.14.100", <br>
+            "language": "en-US,en;q=0.5", <br>
+            "software":"Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:50.0) Gecko/20100101 Firefox/50.0" <br>
+          }
+      </div>
+      
     </main>
 
     <footer>
-      Made with <a href="https://glitch.com">Glitch</a>!
+      <div>
+        Made with <a href="https://glitch.com">Glitch</a>! 
+      </div>
+      <div>
+        A project by <a href="https://freecodecamp.org">freeCodeCamp</a>  
+      </div>
     </footer>
-
-    <!-- include the Glitch button to show what the webpage is about and
-          to make it easier for folks to view source and remix -->
-    <div class="glitchButton" style="position:fixed;top:20px;right:20px;"></div>
-    <script src="https://button.glitch.me/button.js"></script>
+  
+    </div>
 
   </body>
 </html>
