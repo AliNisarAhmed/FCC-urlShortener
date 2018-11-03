@@ -12,7 +12,7 @@ const bodyParser = require('body-parser');
 // http://expressjs.com/en/starter/static-files.html
 app.use(express.static('public'));
 
-app.use(bodyParser.urlencoded({extended: false}))
+app.use(bodyParser.urlencoded({extended: false}));
 
 // http://expressjs.com/en/starter/basic-routing.html
 app.get('/', function(request, response) {
@@ -22,7 +22,6 @@ app.get('/', function(request, response) {
 app.post('/api/shorturl/new', (req, res) => {
   console.log(req.params);
   console.log(req.body);
-  res.send('post request received');
 })
 
 // listen for requests :)
