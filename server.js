@@ -6,14 +6,23 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const dns = require('dns');
+const mongoose = require('mongoose');
 
-// we've started you off with Express, 
-// but feel free to use whatever libs or frameworks you'd like through `package.json`.
+mongoose.connect(process.env.MONGO_URI);
 
-// http://expressjs.com/en/starter/static-files.html
 app.use(express.static('public'));
 
 app.use(bodyParser.urlencoded({extended: false}));
+
+
+const Schema = mongoose.Schema;
+
+const urlSchema = new Schema({
+  adress: { type: String, required: true },
+  short: String
+});
+
+
 
 // http://expressjs.com/en/starter/basic-routing.html
 app.get('/', function(request, response) {
