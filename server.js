@@ -5,6 +5,7 @@
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
+const dns = require('dns');
 
 // we've started you off with Express, 
 // but feel free to use whatever libs or frameworks you'd like through `package.json`.
@@ -20,8 +21,14 @@ app.get('/', function(request, response) {
 });
 
 app.post('/api/shorturl/new', (req, res) => {
-  console.log(req.params);
-  console.log(req.body);
+  let { url } = req.body;
+  console.log(url);
+  dns.lookup(url, (err, add, family) => {
+    if (err) { return console.log(err); }
+    console.log('add: ', add);
+    console.log("family ", family);
+  })
+  res.send('post request received');
 })
 
 // listen for requests :)
