@@ -40,7 +40,10 @@ app.post('/api/shorturl/new', (req, res) => {
     if (err) { return res.json({ "error": "Invalid URL"}) }
   });
   let searchDb = Url.findOne({address: newUrl}, (err, res) => {
-    
+    if (err) {
+      let entry = new Url({ address: newUrl, short_url: Url.estimatedDocumentCount() + 1})
+      entry.save(
+    }
   })
 })
 
