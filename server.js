@@ -25,6 +25,14 @@ const urlSchema = new Schema({
 const Url = mongoose.model('Url', urlSchema);
 
 
+// let entry = new Url({
+//   address: 'www.freecodecamp.com',
+//   short_url: 6
+// });
+// entry.save().then((url) => {
+//   console.log('url saved: ', url);
+// })
+
 
 // http://expressjs.com/en/starter/basic-routing.html
 app.get('/', function(request, response) {
@@ -41,12 +49,13 @@ app.post('/api/shorturl/new', (req, res) => {
   });
   let searchDb = Url.findOne({address: newUrl}, (err, object) => {
     if (err) {
-      let count = Url.estimatedDocumentCount() + 1;
-      let entry = new Url({ address: newUrl, short_url: count })
-      entry.save().then(console.log, console.log);
-      res.send('URL saved');
+      // let count = Url.estimatedDocumentCount() + 1;
+      // let entry = new Url({ address: newUrl, short_url: count })
+      // entry.save().then(console.log, console.log);
+      // res.send('URL saved');
     } else {
       console.log('object: ', object);
+      res.send('url reached');
     }
   })
 })
