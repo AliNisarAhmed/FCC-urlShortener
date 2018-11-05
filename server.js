@@ -7,8 +7,13 @@ const app = express();
 const bodyParser = require('body-parser');
 const dns = require('dns');
 const mongoose = require('mongoose');
+const autoIncrement = require('mongoose-auto-increment');
 
-mongoose.connect(process.env.MONGO_URI);
+
+
+let connection = mongoose.createConnection(process.env.MONGO_URI);
+
+autoIncrement.initialize(connection);
 
 app.use(express.static('public'));
 
@@ -23,6 +28,8 @@ const urlSchema = new Schema({
 });
 
 const Url = mongoose.model('Url', urlSchema);
+
+urlSchema.plugin(autoIncrement.plugin, { model: 'Url', field: 'short_url' });
 
 // let entry = new Url({
 //   address: 'www.freecodecamp.com',
@@ -56,7 +63,7 @@ app.post('/api/shorturl/new', (req, res) => {
   });
   let searchDb = Url.findOne({address: newUrl}, (err, object) => {
     if (!object) {
-      let count = Url.find().Count() + 1;
+      let count = db.collection.count() + 1;
       console.log('count: ', count);
       let entry = new Url({ address: newUrl, short_url: count })
       entry.save().then((res) => {
