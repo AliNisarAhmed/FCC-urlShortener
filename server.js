@@ -32,11 +32,11 @@ const Url = mongoose.model('Url', urlSchema);
 //   console.log('url saved: ', url);
 // });
 
-Url.fineOne({address: 'www.freecodecamp.com'}, (err, obj) => {
+Url.findOne({address: 'www.freeodecamp.com'}, (err, obj) => {
   if (err) {
     return console.log('failed to find the address, need to create');
   } else {
-    console.log('found:
+    console.log('found: ', obj);
   }
 })
 
@@ -55,12 +55,14 @@ app.post('/api/shorturl/new', (req, res) => {
     if (err) { return res.json({ "error": "Invalid URL"}) }
   });
   let searchDb = Url.findOne({address: newUrl}, (err, object) => {
-    if (err) {
-      // let count = Url.estimatedDocumentCount() + 1;
-      // console.log('count: ', count);
-      // let entry = new Url({ address: newUrl, short_url: count })
-      // entry.save().then(console.log, console.log);
-      // return res.json({ address: newUrl, short: count });
+    if (!object) {
+      let count = Url.find().Count() + 1;
+      console.log('count: ', count);
+      let entry = new Url({ address: newUrl, short_url: count })
+      entry.save().then((res) => {
+        return res.json({ address: res.adress, short: res.short_url });
+      }, console.log);
+      
     } else {
       console.log('object: ', object);
       res.redirect(`/api/short/${object.short_url}`);
