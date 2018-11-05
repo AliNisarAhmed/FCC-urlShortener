@@ -18,9 +18,11 @@ app.use(bodyParser.urlencoded({extended: false}));
 const Schema = mongoose.Schema;
 
 const urlSchema = new Schema({
-  adress: { type: String, required: true },
-  short: String
+  address: { type: String, required: true },
+  short_url: Number
 });
+
+const Url = mongoose.model('Url', urlSchema);
 
 
 
