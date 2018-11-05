@@ -32,9 +32,10 @@ app.get('/', function(request, response) {
 app.post('/api/shorturl/new', (req, res) => {
   let { url } = req.body;
   console.log(url);
-  dns.lookup(url, (err, add, family) => {
+  dns.lookup(url, { family: 6, all: true, verbatim: true}, (err, add, family) => {
     if (err) { return console.log(err); }
     console.log('add: ', add);
+    console.log(typeof add);
     console.log("family ", family);
   })
   res.send('post request received');
