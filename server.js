@@ -18,8 +18,8 @@ app.use(bodyParser.urlencoded({extended: false}));
 const Schema = mongoose.Schema;
 
 const urlSchema = new Schema({
-  address: { type: String, required: true },
-  short_url: Number
+  address: { type: String, required: true, unique: true, index: true },
+  short_url: { type: Number }
 });
 
 const Url = mongoose.model('Url', urlSchema);
@@ -31,7 +31,7 @@ const Url = mongoose.model('Url', urlSchema);
 // });
 // entry.save().then((url) => {
 //   console.log('url saved: ', url);
-// })
+// });
 
 
 // http://expressjs.com/en/starter/basic-routing.html
