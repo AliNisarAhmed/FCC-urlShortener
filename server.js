@@ -33,14 +33,15 @@ app.get('/', function(request, response) {
 
 app.post('/api/shorturl/new', (req, res) => {
   let { url } = req.body;
+  let newUrl = url.replace(/https?:\/\//, '');
   console.log(url);
-  dns.lookup(url, { family: 6, all: true, verbatim: true}, (err, add, family) => {
-    if (err) { return console.log(err); }
-    console.log('add: ', add);
-    console.log(typeof add);
-    console.log("family ", family);
+  console.log(newUrl);
+  dns.lookup(newUrl, (err, add, family) => {
+    if (err) { return res.json({ "error": "Invalid URL"}) }
+  });
+  let searchDb = Url.findOne({address: newUrl}, (err, res) => {
+    
   })
-  res.send('post request received');
 })
 
 // listen for requests :)
