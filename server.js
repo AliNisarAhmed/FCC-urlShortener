@@ -24,7 +24,6 @@ const urlSchema = new Schema({
 
 const Url = mongoose.model('Url', urlSchema);
 
-
 // let entry = new Url({
 //   address: 'www.freecodecamp.com',
 //   short_url: 6
@@ -32,6 +31,14 @@ const Url = mongoose.model('Url', urlSchema);
 // entry.save().then((url) => {
 //   console.log('url saved: ', url);
 // });
+
+Url.fineOne({address: 'www.freecodecamp.com'}, (err, obj) => {
+  if (err) {
+    return console.log('failed to find the address, need to create');
+  } else {
+    console.log('found:
+  }
+})
 
 
 // http://expressjs.com/en/starter/basic-routing.html
@@ -50,14 +57,19 @@ app.post('/api/shorturl/new', (req, res) => {
   let searchDb = Url.findOne({address: newUrl}, (err, object) => {
     if (err) {
       // let count = Url.estimatedDocumentCount() + 1;
+      // console.log('count: ', count);
       // let entry = new Url({ address: newUrl, short_url: count })
       // entry.save().then(console.log, console.log);
-      // res.send('URL saved');
+      // return res.json({ address: newUrl, short: count });
     } else {
       console.log('object: ', object);
-      res.send('url reached');
+      res.redirect(`/api/short/${object.short_url}`);
     }
   })
+})
+
+app.get('/api/short/6', (req, res) => {
+  res.redirect('//www.freecodecamp.com');        
 })
 
 // listen for requests :)
