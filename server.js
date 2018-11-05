@@ -39,10 +39,14 @@ app.post('/api/shorturl/new', (req, res) => {
   dns.lookup(newUrl, (err, add, family) => {
     if (err) { return res.json({ "error": "Invalid URL"}) }
   });
-  let searchDb = Url.findOne({address: newUrl}, (err, res) => {
+  let searchDb = Url.findOne({address: newUrl}, (err, object) => {
     if (err) {
-      let entry = new Url({ address: newUrl, short_url: Url.estimatedDocumentCount() + 1})
-      entry.save(
+      let count = Url.estimatedDocumentCount() + 1;
+      let entry = new Url({ address: newUrl, short_url: count })
+      entry.save().then(console.log, console.log);
+      res.send('URL saved');
+    } else {
+      console.log('object: ', object);
     }
   })
 })
