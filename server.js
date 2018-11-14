@@ -17,16 +17,23 @@ app.use(express.static('public'));
 app.use(bodyParser.urlencoded({extended: false}));
 
 
-const Schema = mongoose.Schema;
-
-const urlSchema = new Schema({
+const urlSchema = new mongoose.Schema({
   original_url: { type: String },
   short_url: { type: Number },
-  count: 
+  count: { type: Number }
 });
 
+const countSchema = new mongoose.Schema({
+  seq: { type: Number, default: 0 }
+});
+
+const Count = mongoose.model('count', countSchema)
 const Url = mongoose.model('Url', urlSchema);
 
+
+urlSchema.pre('save', function(next){
+  Count.findByIdAndUpdate(this.id)
+})
 
 // let entry = new Url({
 //   address: 'www.twitter.com',
