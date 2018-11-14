@@ -24,6 +24,7 @@ const urlSchema = new mongoose.Schema({
 });
 
 const countSchema = new mongoose.Schema({
+  _id: { type: String, required: true },
   seq: { type: Number, default: 0 }
 });
 
@@ -32,8 +33,16 @@ const Url = mongoose.model('Url', urlSchema);
 
 
 urlSchema.pre('save', function(next){
-  Count.findByIdAndUpdate(this.id, 
-})
+  let doc = this;
+  Count.findByIdAndUpdate({_id: 'counterId'}, {$inc: { seq: 1 }}, {new: true, upsert: true}, function(count) {
+    doc.count = count;
+    next();
+  });
+});
+
+const createUrl = (urlDetails) => {
+  return Url.create(urlDetails);
+};
 
 // let entry = new Url({
 //   address: 'www.twitter.com',
