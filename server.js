@@ -32,7 +32,7 @@ const Url = mongoose.model('Url', urlSchema);
 
 
 urlSchema.pre('save', function(next){
-  Count.findByIdAndUpdate(this.id)
+  Count.findByIdAndUpdate(this.id, 
 })
 
 // let entry = new Url({
