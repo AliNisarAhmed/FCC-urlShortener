@@ -20,8 +20,9 @@ app.use(bodyParser.urlencoded({extended: false}));
 const Schema = mongoose.Schema;
 
 const urlSchema = new Schema({
-  original_url: { type: String, required: true, unique: true },
-  short_url: { type: Number }
+  original_url: { type: String },
+  short_url: { type: Number },
+  count: 
 });
 
 const Url = mongoose.model('Url', urlSchema);
