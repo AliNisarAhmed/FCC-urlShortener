@@ -1,3 +1,5 @@
+// USEFUL RESOURCE: https://stackoverflow.com/questions/28357965/mongoose-auto-increment
+
 // server.js
 // where your node app starts
 
