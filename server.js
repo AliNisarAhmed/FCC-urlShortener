@@ -45,8 +45,6 @@ app.get('/', function(request, response) {
 app.post('/api/shorturl/new', async (req, res) => {
   let { url } = req.body;
   let newUrl = url.replace(/https?:\/\//, '');
-  console.log(url);
-  console.log(newUrl);
 
   // checking if the url is syntactically valid
   if(!isUrl) {
@@ -63,8 +61,6 @@ app.post('/api/shorturl/new', async (req, res) => {
   Url.findOne({ original_url: newUrl }).then((doc) => {
     // if we find the doc, we return it from the db
     // ese we create a new doc in the db for the url
-    console.log('found');
-    console.log('doc :', doc);
     if (doc) {
       return res.json(doc);
     } else {
@@ -72,14 +68,13 @@ app.post('/api/shorturl/new', async (req, res) => {
         original_url: newUrl,
         short_url: it.next().value
       });
-      newOne.save().then((doc) => {
+      newOne.save().  then((doc) => {
         return res.json(doc);
       }, (e) => console.log(e));
     }
 
   }, (e) => {
-    console.log('not found');
-    return console.log('Error: cannot create');
+    res.status(400).send('server error');
   });
 });
 
