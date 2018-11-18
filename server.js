@@ -13,7 +13,7 @@ const isUrl = require('is-url');
 
 mongoose.Promise = global.Promise;
 
-mongoose.connect('mongodb://localhost:27017/url-shortener');
+mongoose.connect(process.env.MONGO_URI);
 
 app.use(express.static('public'));
 
