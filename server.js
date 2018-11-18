@@ -9,10 +9,11 @@ const app = express();
 const bodyParser = require('body-parser');
 const dns = require('dns');
 const mongoose = require('mongoose');
+const isUrl = require('is-url');
 
+mongoose.Promise = global.Promise;
 
-
-mongoose.connect(process.env.MONGO_URI);
+mongoose.connect('mongodb://localhost:27017/url-shortener');
 
 app.use(express.static('public'));
 
@@ -20,83 +21,85 @@ app.use(bodyParser.urlencoded({extended: false}));
 
 
 const urlSchema = new mongoose.Schema({
-  original_url: { type: String },
-  short_url: { type: Number },
-  count: { type: Number }
+  original_url: String,
+  short_url: Number
 });
 
-const countSchema = new mongoose.Schema({
-  _id: { type: String, required: true },
-  seq: { type: Number, default: 0 }
-});
 
-const Count = mongoose.model('count', countSchema)
+// Using a generator function to get a new short url for every new request 
+function* newNumber () {
+  let foo = 0;
+  while (true) {
+    yield foo++;
+  }
+}
+let it = newNumber();  //starting the generator
+
 const Url = mongoose.model('Url', urlSchema);
 
 
-urlSchema.pre('save', function(next){
-  let doc = this;
-  Count.findByIdAndUpdate({_id: 'counterId'}, {$inc: { seq: 1 }}, {new: true, upsert: true}, function(count) {
-    doc.count = count;
-    next();
-  });
-});
-
-const createUrl = (urlDetails) => {
-  return Url.create(urlDetails);
-};
-
-// let entry = new Url({
-//   address: 'www.twitter.com',
-//   short_url: 7
-// });
-// entry.save().then((url) => {
-//   console.log('url saved: ', url);
-// });
-
-// Url.findOne({address: 'www.freeodecamp.com'}, (err, obj) => {
-//   if (err) {
-//     return console.log('failed to find the address, need to create');
-//   } else {
-//     console.log('found: ', obj);
-//   }
-// })
-
-
-// http://expressjs.com/en/starter/basic-routing.html
 app.get('/', function(request, response) {
   response.sendFile(__dirname + '/views/index.html');
 });
 
-app.post('/api/shorturl/new', (req, res) => {
+app.post('/api/shorturl/new', async (req, res) => {
   let { url } = req.body;
   let newUrl = url.replace(/https?:\/\//, '');
   console.log(url);
   console.log(newUrl);
+
+  // checking if the url is syntactically valid
+  if(!isUrl) {
+    return res.json({ "error": "Invalid URL"});
+  }
+
+
+  // checking if the website at the given url exists
   dns.lookup(newUrl, (err, add, family) => {
     if (err) { return res.json({ "error": "Invalid URL"}) }
   });
-  let searchDb = Url.findOne({address: newUrl}, (err, object) => {
-    if (!object) {
-      // let count = db.collection.count() + 1;
-      // console.log('count: ', count);
-      // let entry = new Url({ address: newUrl, short_url: count })
-      // entry.save().then((res) => {
-      //   return res.json({ address: res.adress, short: res.short_url });
-      // }, console.log);
-      res.send('reached here');
+
+
+  Url.findOne({ original_url: newUrl }).then((doc) => {
+    // if we find the doc, we return it from the db
+    // ese we create a new doc in the db for the url
+    console.log('found');
+    console.log('doc :', doc);
+    if (doc) {
+      return res.json(doc);
     } else {
-      console.log('object: ', object);
-      res.redirect(`/api/short/${object.short_url}`);
+      const newOne = new Url({
+        original_url: newUrl,
+        short_url: it.next().value
+      });
+      newOne.save().then((doc) => {
+        return res.json(doc);
+      }, (e) => console.log(e));
     }
-  })
+
+  }, (e) => {
+    console.log('not found');
+    return console.log('Error: cannot create');
+  });
+});
+
+
+app.get('/api/short/:short', async (req, res) => {
+  let short = req.params.short;
+  Url.findOne({short_url: short}).then((doc) => {
+    if (doc) {
+      console.log('doc: ', doc);
+      res.redirect(`https://${doc.original_url}`);
+    } else {
+      res.status(400).send('bad request');
+    }
+  }, (e) => { console.log(e)});
+  
 })
 
-app.get('/api/short/6', (req, res) => {
-  res.redirect('//www.freecodecamp.com');        
-})
+const PORT = process.env.port || 3000;
 
 // listen for requests :)
-const listener = app.listen(process.env.PORT, function() {
+const listener = app.listen(PORT, function() {
   console.log('Your app is listening on port ' + listener.address().port);
 });
