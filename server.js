@@ -62,14 +62,15 @@ app.post('/api/shorturl/new', async (req, res) => {
     // if we find the doc, we return it from the db
     // ese we create a new doc in the db for the url
     if (doc) {
-      return res.json(doc);
+      let { original_url, short_url } = doc
+      return res.json({original_url, short_url});
     } else {
       const newOne = new Url({
         original_url: newUrl,
         short_url: it.next().value
       });
       newOne.save().  then((doc) => {
-        return res.json(doc);
+        return res.json({original_url: doc.original_url, short_url: doc.short_url});
       }, (e) => console.log(e));
     }
 
