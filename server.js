@@ -1,15 +1,14 @@
 // USEFUL RESOURCE: https://stackoverflow.com/questions/28357965/mongoose-auto-increment
 
-// server.js
-// where your node app starts
+// NOTE** : The app is not correctly auto-incrementing the short_url, ,it does it even when the url is invalid, need a fix
 
-// init project
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const dns = require('dns');
 const mongoose = require('mongoose');
 const isUrl = require('is-url');
+const  AutoIncrement = require('mongoose-sequence')(mongoose);
 
 mongoose.Promise = global.Promise;
 
@@ -26,6 +25,10 @@ const urlSchema = new mongoose.Schema({
 });
 
 
+urlSchema.plugin(AutoIncrement, { id:"short", inc_field: "short_url", disable_hooks: true });
+
+/* The generator does not work when the app restarts
+
 // Using a generator function to get a new short url for every new request 
 function* newNumber () {
   let foo = 0;
@@ -35,60 +38,74 @@ function* newNumber () {
 }
 let it = newNumber();  //starting the generator
 
-const Url = mongoose.model('Url', urlSchema);
+*/
 
+
+const Url = mongoose.model('Url', urlSchema);
 
 app.get('/', function(request, response) {
   response.sendFile(__dirname + '/views/index.html');
 });
 
+
+
 app.post('/api/shorturl/new', async (req, res) => {
-  let { url } = req.body;
-  let newUrl = url.replace(/https?:\/\//, '');
+  try {
+    let { url } = req.body;
+    let newUrl = url.replace(/https?:\/\//, '');
 
-  // checking if the url is syntactically valid
-  if(!isUrl) {
-    return res.json({ "error": "Invalid URL"});
-  }
-
-
-  // checking if the website at the given url exists
-  dns.lookup(newUrl, (err, add, family) => {
-    if (err) { return res.json({ "error": "Invalid URL"}) }
-  });
-
-
-  Url.findOne({ original_url: newUrl }).then((doc) => {
-    // if we find the doc, we return it from the db
-    // ese we create a new doc in the db for the url
-    if (doc) {
-      let { original_url, short_url } = doc
-      return res.json({original_url, short_url});
-    } else {
-      const newOne = new Url({
-        original_url: newUrl,
-        short_url: it.next().value
-      });
-      newOne.save().  then((doc) => {
-        return res.json({original_url: doc.original_url, short_url: doc.short_url});
-      }, (e) => console.log(e));
+    // checking if the url is syntactically valid
+    if(!isUrl) {
+      return res.json({ "error": "Invalid URL"});
     }
 
-  }, (e) => {
-    res.status(400).send('server error');
-  });
+
+    // checking if the website at the given url exists
+    dns.lookup(newUrl, (err, add, family) => {
+      if (err) { return res.json({ "error": "Invalid URL"}) }
+    });
+
+
+    let foundUrl = await Url.findOne({ original_url: newUrl });
+
+    if (foundUrl) {
+      let { original_url, short_url } = foundUrl
+      return res.json({original_url, short_url});  
+    
+    } else {
+      
+      try {
+        let created = await Url.create({ original_url: newUrl })
+        let updated = await created.setNext('short')   // manually updating the short field using mongoose-sequence
+         res.json({
+                original_url: updated.original_url, 
+                short_url: updated.short_url
+              });
+
+      } catch(error) {
+        res.send(error);
+      }
+      
+    }
+    
+  } catch (err) {
+    res.send(err);
+  }
 });
 
 
 app.get('/api/short/:short', async (req, res) => {
   let short = req.params.short;
   Url.findOne({short_url: short}).then((doc) => {
+    
     if (doc) {
       console.log('doc: ', doc);
       res.redirect(`https://${doc.original_url}`);
+    
     } else {
       res.status(400).send('bad request');
     }
+    
   }, (e) => { console.log(e)});
   
 })
